@@ -1,0 +1,14 @@
+{
+  "name": "jointjs-claude-playground",
+  "version": "0.1.0",
+  "description": "JointJS-powered interactive playground skills — (1) code map visualizations for library/codebase architecture (supports local codebase analysis), (2) data explorer diagrams for database schemas and entity models (supports local schema files), both on a shared graph-explorer framework — (3) canvas builder for drag-and-drop interactive builders (SQL query, regex, API designer, data pipeline, cron, decision tree/rule engine, GitHub Actions, state machine, Docker Compose), (4) diff review with inline commenting and JointJS call graphs, and (5) site explorer for interactive website/docs sitemaps fetched from sitemap.xml. All skills generate self-contained HTML files with no build step.",
+  "author": {
+    "name": "JointJS",
+    "email": "zoran@jointjs.com",
+    "url": "https://jointjs.com"
+  },
+  "homepage": "https://jointjs.com",
+  "repository": "https://github.com/clientIO/jointjs-claude-playground",
+  "license": "MIT",
+  "keywords": ["jointjs", "jointjs ai", "claude plugin", "jointjs claude", "interactive diagrams", "code visualization", "data modeling", "canvas builder", "diff review", "site explorer"]
+}
