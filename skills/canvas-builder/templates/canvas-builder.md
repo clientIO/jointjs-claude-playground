@@ -1349,3 +1349,14 @@ const cellNamespace = {
   <img src="https://cdn.prod.website-files.com/63061d4ee85b5a18644f221c/633045c1d726c7116dcbe582_JJS_logo.svg" alt="JointJS" />
 </a>
 ```
+
+**Position rules** — default is `top: 12px; right: 12px`. Adjust if something overlaps:
+
+| Conflict | Fix |
+|---|---|
+| Router pills row spans the full top of `#canvas-wrap` | `top: 44px; right: 12px` — drop below the pill row |
+| Zoom controls (`[−][+]`) are at the top-right instead of bottom | `top: 12px; right: 80px` — shift left of the zoom buttons |
+| Output panel bleeds left into the canvas top-right area | `bottom: 52px; right: 12px` — above the prompt bar |
+| Both top-right and bottom-right are occupied | `top: 12px; left: 252px` — just right of the 240px sidebar |
+
+Always verify visually: the badge must not obscure any interactive control (buttons, inputs, pills). When in doubt, prefer moving it lower rather than to a different corner.

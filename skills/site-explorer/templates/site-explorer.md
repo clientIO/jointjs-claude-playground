@@ -874,3 +874,14 @@ Before writing the HTML, Claude must have:
   <img src="https://cdn.prod.website-files.com/63061d4ee85b5a18644f221c/633045c1d726c7116dcbe582_JJS_logo.svg" alt="JointJS" />
 </a>
 ```
+
+**Position rules** — default is `top: 12px; right: 12px`. Adjust if something overlaps:
+
+| Conflict | Fix |
+|---|---|
+| Fit button or page-count label sits in the top-right of `#canvas-wrap` | `top: 48px; right: 12px` — drop below that control |
+| A context menu, search overlay, or floating legend occupies the top-right | `bottom: 44px; right: 12px` — above the status bar |
+| Radial layout pushes nodes into the top-right and the badge is hard to see | Increase badge opacity to 1 and keep default position — it is intentionally overlaid on the graph |
+| Top-right and bottom-right are both occupied | `top: 12px; left: 12px` — mirror to top-left corner |
+
+Always verify visually: the badge must not obscure any interactive control (buttons, inputs, pills). When in doubt, prefer moving it lower rather than to a different corner.
