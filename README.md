@@ -122,9 +122,36 @@ When you ask Claude to map a website's structure — e.g. "create a site map for
 
 ## Installation
 
+You can install the plugin through JointJS marketplace. First you need to add the marketplace, then you can install the plugin.
+
+### Add JointJS Marketplace
+
+```
+/plugin marketplace add https://github.com/clientIO/jointjs-claude-marketplace
+```
+
+### Install JointJS Claude Playground plugin
 ```
 /plugin install github:clientIO/jointjs-claude-playground
 ```
+
+After installing the plugin, run `/reload-plugins` to enable the newly installed plugin.
+
+Sometimes, the `/reload-plugins` command is unreliable, so you might need to restart Claude Code in your terminal—exit it and launch it again using `claude` if you don’t see plugin skills in the autocomplete list under `/jointjs` after installing and reloading the plugins.
+
+#### A potential problem with installing Claude Code plugins
+
+Note that there’s a bug in Claude Code where installing a Claude Code Plugin fails if you don’t have SSH keys configured on your system for GitHub.
+
+When installing a plugin, Claude Code clones the repository via SSH (`git@github.com:…`), so if your GitHub SSH keys aren’t configured properly, the installation will fail.
+
+Ideally, you should fix your GitHub SSH config, but as a workaround, before Claude Code resolves the problem, you can bypass SSH in your git config—run the following in your terminal:
+```bash
+git config --global url."https://github.com/".insteadOf git@github.com:
+```
+
+If you want to learn more about the bug in Claude Code, check the open issue on GitHub:
+[Marketplace plugin cloning should default to HTTPS instead of SSH ](https://github.com/anthropics/claude-code/issues/26588)
 
 ## Output
 
