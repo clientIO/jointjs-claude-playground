@@ -10,7 +10,7 @@ When you ask Claude to visualize a library's structure — e.g. "create a code m
 
 - **Animated node graph** using JointJS 4.2 with layer-colored nodes and typed connections
 - **Preset views** that animate between Full, Core, Rendering, and Geometry perspectives
-- **Router toggle** to switch between Manhattan, Orthogonal, Metro, Normal, and One Side routing live
+- **Router toggle** to switch between Manhattan, Metro, Direct, and One Side live
 - **Path highlighting** — hover any node to trace the shortest undirected path to the pinned anchor node
 - **Click-to-comment** — click nodes to read docs, see code snippets, and add notes
 - **Generated prompt** at the bottom — summarizes your active view and notes, ready to copy back into Claude

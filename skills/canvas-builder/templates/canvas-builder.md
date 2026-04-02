@@ -390,38 +390,59 @@ document.getElementById('zoom-out').onclick = () => { const s = paper.scale().sx
 
 ---
 
-## Shared Router Toggle
+## Shared Router & Connector Toggle
 
 **Always include.** Every builder must render router pills in its canvas toolbar — they let reviewers/users see how the graph reads under different layout algorithms without changing the data.
 
-5 pills in the canvas toolbar. Apply to all existing links immediately when the active router changes, and to each new link when it is created.
+Pills in the canvas toolbar. Apply to all existing links immediately when the active router/connector changes, and to each new link when it is created.
 
 ```js
 const ROUTERS = [
-  { name: 'normal',     label: 'Direct',     args: {} },
-  { name: 'orthogonal', label: 'Orthogonal', args: { padding: 10 } },
-  { name: 'manhattan',  label: 'Manhattan',  args: { padding: 18 } },
-  { name: 'metro',      label: 'Metro',      args: { padding: 10 } },
-  { name: 'oneSide',    label: 'One Side',   args: { padding: 20 } },
+  { name: 'normal',     label: 'Direct',      desc: 'Direct lines, no bends',         args: {} },
+  { name: 'manhattan',  label: 'Manhattan',   desc: 'Right-angles, avoids obstacles', args: { padding: 18 } },
+  { name: 'rightAngle', label: 'Right Angle', desc: 'Right-angles, clean bends',      args: { margin: 20 } },
+  { name: 'metro',      label: 'Metro',       desc: '45° diagonals at bends',         args: { padding: 10 } },
 ];
-let _activeRouter = 'normal';
+let _activeRouter = 'metro';
+let _activeConnector = 'rounded';
 
 function applyRouter(name) {
   _activeRouter = name;
   const r   = ROUTERS.find(r => r.name === name);
   const def = Object.keys(r.args).length ? { name, args: r.args } : { name };
   graph.getLinks().forEach(link => link.router(def));
-  document.querySelectorAll('.router-pill').forEach(btn =>
+  document.querySelectorAll('.router-pill:not(.connector-pill)').forEach(btn =>
     btn.classList.toggle('active', btn.dataset.router === name));
 }
-// Build router pills + Fit + Clear into the canvas toolbar
+
+const CONNECTORS = [
+  { name: 'rounded', label: 'Rounded', desc: 'Rounded corners on bends', args: { radius: 10 } },
+  { name: 'curve',   label: 'Curve',   desc: 'Smooth bezier curves',     args: {} },
+];
+function applyConnector(name) {
+  _activeConnector = name;
+  const c = CONNECTORS.find(c => c.name === name);
+  const def = Object.keys(c.args).length ? { name, args: c.args } : { name };
+  graph.getLinks().forEach(l => l.connector(def));
+  document.querySelectorAll('.connector-pill').forEach(b => b.classList.toggle('active', b.dataset.connector === name));
+}
+
+// Build router pills + connector pills + Fit + Clear into the canvas toolbar
 function buildToolbar() {
   const tb = document.getElementById('canvas-toolbar');
   ROUTERS.forEach(r => {
     const b = document.createElement('button');
-    b.className = 'router-pill' + (r.name === 'normal' ? ' active' : '');
-    b.dataset.router = r.name; b.textContent = r.label;
+    b.className = 'router-pill' + (r.name === _activeRouter ? ' active' : '');
+    b.dataset.router = r.name; b.textContent = r.label; b.title = r.desc;
     b.onclick = () => applyRouter(r.name);
+    tb.appendChild(b);
+  });
+  const sep2 = document.createElement('div'); sep2.className = 'toolbar-sep'; tb.appendChild(sep2);
+  CONNECTORS.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'router-pill connector-pill' + (c.name === _activeConnector ? ' active' : '');
+    b.dataset.connector = c.name; b.textContent = c.label; b.title = c.desc;
+    b.onclick = () => applyConnector(c.name);
     tb.appendChild(b);
   });
   const sep = document.createElement('div'); sep.className = 'toolbar-sep'; tb.appendChild(sep);
@@ -433,10 +454,10 @@ function buildToolbar() {
   tb.appendChild(clr);
 }
 
-// Call applyRouter(_activeRouter) after every graph rebuild so new links
-// inherit the currently-selected router:
-//   populateExample() → applyRouter(_activeRouter); paper.scaleContentToFit(…); rebuildOutput();
-//   paper.on('link:connect', …) → applyRouter(_activeRouter); (covered by Graph Event Wiring above)
+// Call applyRouter(_activeRouter) and applyConnector(_activeConnector) after every graph rebuild
+// so new links inherit the currently-selected router and connector:
+//   populateExample() → applyRouter(_activeRouter); applyConnector(_activeConnector); paper.scaleContentToFit(…); rebuildOutput();
+//   paper.on('link:connect', …) → applyRouter(_activeRouter); applyConnector(_activeConnector); (covered by Graph Event Wiring above)
 ```
 
 Note: `'straight'` is a **connector** name, not a router. Always use `{ name: 'normal' }` for direct lines.
@@ -645,7 +666,7 @@ When updating a label: always re-apply `textAnchor: 'middle', textVerticalAnchor
 | Diagram distorted on load, correct only after zoom (or clicking Fit) | `scaleContentToFit` ran before JointJS had real pixel dimensions. `clientWidth` read during script execution or in a `requestAnimationFrame` can return 0 when flex layout hasn't been computed yet. Fix: use `window.addEventListener('load', ...)` — the `load` event fires after all CSS is applied and layout is complete, so `clientWidth` is always correct. Call `setDimensions`, then `populateExample`, then `scaleContentToFit` inside that handler. |
 | `joint.util.timing.cubicBezier` is not a function | This API does not exist in JointJS 3.x. Use a hand-rolled easing: `t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2` (ease-in-out cubic). |
 | New links ignore the selected router | Call `applyRouter(_activeRouter)` after every graph rebuild and after `link:connect` fires — new links default to the element-level router, not the paper-level one. |
-| Router pills missing from a new builder | Router toggle is **required in all builders** — add the 5 pills and `applyRouter` to every canvas toolbar via `buildToolbar()`. |
+| Router pills missing from a new builder | Router toggle is **required in all builders** — add router + connector pills and `applyRouter`/`applyConnector` to every canvas toolbar via `buildToolbar()`. |
 | Output doesn't update when a link is removed | Wire `graph.on('remove', rebuildOutput)` AND `link:disconnect` — the Remove tool fires the graph event but manual disconnects (dragging a link endpoint) fire only `link:disconnect`. |
 | Double-click opens overlay but node data doesn't persist | Set custom data with `el.set('myProp', val)` not `el.attr(…)` — attrs are visual only and don't survive output traversal. |
 | Drag data lost because itemId not found | Use `JSON.stringify(item)` as a single `itemData` key — no secondary lookup needed and all item fields survive the drag. |

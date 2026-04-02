@@ -130,7 +130,8 @@ const hunkState    = {};  // hunkId → 'pending' | 'approved' | 'rejected'
 const lineComments = {};  // 'hunkId:lineIndex' → [{ author, ts, text }]
 let   activeFile   = Object.keys(HUNKS_DATA)[0];
 let   _activeFilter = 'all';   // 'all' | 'changed' | 'callers'
-let   _activeRouter = 'normal';
+let   _activeRouter = 'metro';
+let   _activeConnector = 'rounded';
 let   _selectedFuncId = null;
 
 // Init hunk state
@@ -515,11 +516,10 @@ function selectGraphNode(funcId) {
 
 ```js
 const ROUTERS = [
-  { name: 'normal',     label: 'Direct',      args: {} },
-  { name: 'orthogonal', label: 'Orthogonal',   args: { padding: 10 } },
-  { name: 'manhattan',  label: 'Manhattan',    args: { padding: 18 } },
-  { name: 'metro',      label: 'Metro',        args: { padding: 10 } },
-  { name: 'oneSide',    label: 'One Side',     args: { padding: 20 } },
+  { name: 'normal',     label: 'Direct',      desc: 'Direct lines, no bends',         args: {} },
+  { name: 'manhattan',  label: 'Manhattan',   desc: 'Right-angles, avoids obstacles', args: { padding: 18 } },
+  { name: 'rightAngle', label: 'Right Angle', desc: 'Right-angles, clean bends',      args: { margin: 20 } },
+  { name: 'metro',      label: 'Metro',       desc: '45° diagonals at bends',         args: { padding: 10 } },
 ];
 
 function applyRouter(name) {
@@ -527,17 +527,36 @@ function applyRouter(name) {
   const r   = ROUTERS.find(r => r.name === name);
   const def = Object.keys(r.args).length ? { name, args: r.args } : { name };
   graph.getLinks().forEach(link => link.router(def));
-  document.querySelectorAll('.router-pill').forEach(b =>
+  document.querySelectorAll('.router-pill:not(.connector-pill)').forEach(b =>
     b.classList.toggle('active', b.dataset.router === name));
+}
+
+const CONNECTORS = [
+  { name: 'rounded', label: 'Rounded', desc: 'Rounded corners on bends', args: { radius: 10 } },
+  { name: 'curve',   label: 'Curve',   desc: 'Smooth bezier curves',     args: {} },
+];
+function applyConnector(name) {
+  _activeConnector = name;
+  const c = CONNECTORS.find(c => c.name === name);
+  const def = Object.keys(c.args).length ? { name, args: c.args } : { name };
+  graph.getLinks().forEach(l => l.connector(def));
+  document.querySelectorAll('.connector-pill').forEach(b => b.classList.toggle('active', b.dataset.connector === name));
 }
 
 function buildRouterPills() {
   const el = document.getElementById('router-pills');
   ROUTERS.forEach(r => {
     const b = document.createElement('button');
-    b.className = 'router-pill' + (r.name === 'normal' ? ' active' : '');
-    b.dataset.router = r.name; b.textContent = r.label;
+    b.className = 'router-pill' + (r.name === _activeRouter ? ' active' : '');
+    b.dataset.router = r.name; b.textContent = r.label; b.title = r.desc;
     b.onclick = () => applyRouter(r.name);
+    el.appendChild(b);
+  });
+  CONNECTORS.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'router-pill connector-pill' + (c.name === _activeConnector ? ' active' : '');
+    b.dataset.connector = c.name; b.textContent = c.label; b.title = c.desc;
+    b.onclick = () => applyConnector(c.name);
     el.appendChild(b);
   });
 }

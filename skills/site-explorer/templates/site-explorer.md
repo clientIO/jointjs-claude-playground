@@ -254,7 +254,8 @@ const paper = new joint.dia.Paper({
 const state = {
   activeSection:  null,      // null = all sections visible
   maxDepth:       Infinity,  // depth toggle
-  router:         'straight',// 'straight' | 'orthogonal' | 'metro'
+  router:         'metro',   // 'metro' | 'manhattan' | 'rightAngle' | 'normal'
+  connector:      'rounded', // 'rounded' | 'curve'
   layout:         'tree',    // 'tree' | 'radial'
   collapsed:      new Set(['section-a', 'section-b']), // pre-collapse noisy sections (many pages with little hierarchy); use section IDs
   pinned:         new Map(), // nodeId → {x, y} — survives graph rebuilds
@@ -469,8 +470,8 @@ function buildGraph() {
     graph.addCell(el);
   });
 
-  const routerCfg = state.router === 'straight' ? { name: 'normal' } : { name: state.router };
-  const connCfg   = state.router === 'metro'    ? { name: 'rounded', args: { radius: 8 } } : { name: 'normal' };
+  const routerCfg = { name: state.router };
+  const connCfg   = state.connector === 'rounded' ? { name: 'rounded', args: { radius: 8 } } : { name: state.connector };
 
   // Tree links
   allLinks.forEach(({ from, to }) => {
@@ -669,9 +670,13 @@ function applySearch(q) {
   <button class="depth-btn"         onclick="setDepth(1, this)">Top</button>
   <button class="depth-btn"         onclick="setDepth(2, this)">2L</button>
   <span style="color:#30363d;font-size:11px">│</span>
-  <button class="router-btn active" onclick="setRouter('straight', this)">straight</button>
-  <button class="router-btn"        onclick="setRouter('orthogonal', this)">orthogonal</button>
-  <button class="router-btn"        onclick="setRouter('metro', this)">metro</button>
+  <button class="router-btn active" onclick="setRouter('metro', this)">Metro</button>
+  <button class="router-btn"        onclick="setRouter('manhattan', this)">Manhattan</button>
+  <button class="router-btn"        onclick="setRouter('rightAngle', this)">Right Angle</button>
+  <button class="router-btn"        onclick="setRouter('normal', this)">Direct</button>
+  <span style="color:#30363d;font-size:11px">│</span>
+  <button class="router-btn connector-btn active" onclick="setConnector('rounded', this)">Rounded</button>
+  <button class="router-btn connector-btn"        onclick="setConnector('curve', this)">Curve</button>
   <span style="color:#30363d;font-size:11px">│</span>
   <button class="layout-btn active" onclick="setLayout('tree', this)">tree</button>
   <button class="layout-btn"        onclick="setLayout('radial', this)">radial</button>
@@ -731,13 +736,23 @@ function setDepth(d, btn) {
 
 function setRouter(name, btn) {
   state.router = name;
-  document.querySelectorAll('.router-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.router-btn:not(.connector-btn)').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   // Apply to existing links without rebuilding — skip CrossLinks (always dashed)
   graph.getLinks().forEach(link => {
     if (link.get('type') === 'sitemap.CrossLink') return;
-    link.set('router',    name === 'straight' ? { name: 'normal' } : { name });
-    link.set('connector', name === 'metro'    ? { name: 'rounded', args: { radius: 8 } } : { name: 'normal' });
+    link.set('router', { name: name === 'normal' ? 'normal' : name });
+  });
+}
+
+function setConnector(name, btn) {
+  state.connector = name;
+  document.querySelectorAll('.connector-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const def = name === 'rounded' ? { name: 'rounded', args: { radius: 8 } } : { name };
+  graph.getLinks().forEach(link => {
+    if (link.get('type') === 'sitemap.CrossLink') return;
+    link.set('connector', def);
   });
 }
 

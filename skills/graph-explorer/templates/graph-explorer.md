@@ -84,7 +84,8 @@ Data Explorer additionally needs field table styles — see Data Explorer spec.
 const state = {
   layers: { ...PRESETS.full.layers },
   conns:  { ...PRESETS.full.conns },
-  router: 'manhattan',
+  router: 'metro',
+  connector: 'rounded',
   zoom: 0.7,
   comments: [],
   search: '',
@@ -326,17 +327,16 @@ Add two buttons to the sidebar below the router toggle:
 - **"Fit View"** — calls `fitVisibleContent()`
 - **"Reset Layout"** — resets state to the full preset and calls `animateToState()`
 
-### Router toggle
+### Router & Connector toggle
 
-5 options in a 2-column grid. Use `'normal'` for direct lines — NOT `'straight'` (that's a connector):
+4 router options + 2 connector options in a 2-column grid. Use `'normal'` for direct lines — NOT `'straight'` (that's a connector):
 
 ```js
 const ROUTERS = [
-  { name: 'manhattan',  label: 'Manhattan',  desc: 'Right-angles, avoids obstacles', args: { padding: 18 } },
-  { name: 'orthogonal', label: 'Orthogonal', desc: 'Right-angles, no avoidance',     args: { padding: 10 } },
-  { name: 'metro',      label: 'Metro',      desc: '45° diagonals at bends',         args: { padding: 10 } },
-  { name: 'normal',     label: 'Normal',     desc: 'Direct lines, no bends',         args: {} },
-  { name: 'oneSide',    label: 'One Side',   desc: 'All links exit one side',        args: { padding: 20 } },
+  { name: 'manhattan',  label: 'Manhattan',   desc: 'Right-angles, avoids obstacles', args: { padding: 18 } },
+  { name: 'rightAngle', label: 'Right Angle', desc: 'Right-angles, clean bends',      args: { margin: 20 } },
+  { name: 'metro',      label: 'Metro',       desc: '45° diagonals at bends',         args: { padding: 10 } },
+  { name: 'normal',     label: 'Direct',      desc: 'Direct lines, no bends',         args: {} },
 ];
 
 function applyRouter(name) {
@@ -344,9 +344,47 @@ function applyRouter(name) {
   const r = ROUTERS.find(r => r.name === name);
   const def = Object.keys(r.args).length ? { name, args: r.args } : { name };
   graph.getLinks().forEach(link => link.router(def));
+  renderControls();
 }
-// Call applyRouter(state.router) at the end of initGraph() so all links get
-// the persisted router on initial render and after each animateToState() rebuild.
+
+const CONNECTORS = [
+  { name: 'rounded', label: 'Rounded', desc: 'Rounded corners on bends', args: { radius: 10 } },
+  { name: 'curve',   label: 'Curve',   desc: 'Smooth bezier curves',     args: {} },
+];
+function applyConnector(name) {
+  state.connector = name;
+  const c = CONNECTORS.find(c => c.name === name);
+  const def = Object.keys(c.args).length ? { name, args: c.args } : { name };
+  graph.getLinks().forEach(link => link.connector(def));
+  renderControls();
+}
+// Call applyRouter(state.router) and applyConnector(state.connector) at the end of initGraph()
+// so all links get the persisted router/connector on initial render and after each animateToState() rebuild.
+```
+
+In the sidebar HTML, add a Connector section after the Router section:
+
+```html
+    <div class="sidebar-section">
+      <div class="sidebar-title">Connector</div>
+      <div class="router-grid" id="connector-btns"></div>
+    </div>
+```
+
+In `renderControls()`, after the router buttons rendering block, add:
+
+```js
+  // Connector
+  const connectorEl = document.getElementById('connector-btns');
+  connectorEl.innerHTML = '';
+  CONNECTORS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'router-btn' + (state.connector === c.name ? ' active' : '');
+    btn.title = c.desc;
+    btn.textContent = c.label;
+    btn.onclick = () => applyConnector(c.name);
+    connectorEl.appendChild(btn);
+  });
 ```
 
 ### Path highlighting (undirected BFS)
