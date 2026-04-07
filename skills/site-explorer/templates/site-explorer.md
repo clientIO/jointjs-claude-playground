@@ -29,16 +29,14 @@ No sidebar. No output panel. The tree IS the output.
   transition: border-color 160ms, color 160ms, background 160ms;
 }
 #powered-by:hover { border-color: #58a6ff; color: #c9d1d9; background: #1c2d40cc; }
-#powered-by img { height: 18px; width: auto; opacity: 0.85; transition: opacity 160ms; }
+#powered-by img { margin-left: 5px; height: 18px; width: auto; opacity: 0.85; transition: opacity 160ms; }
 #powered-by:hover img { opacity: 1; }
-#powered-by .pb-sep { width: 1px; margin-inline: 5px; height: 14px; background: #30363d; }
 ```
 
 **HTML** (first child inside `#canvas-wrap`):
 ```html
 <a id="powered-by" href="https://jointjs.com?utm_source=jointjs-claude-playground&utm_medium=site-explorer&utm_campaign=claude-code" target="_blank" rel="noopener">
   <span style="color:#6e7681;font-size:10px;letter-spacing:0.04em;text-transform:uppercase">Powered by</span>
-  <div class="pb-sep"></div>
   <img src="https://cdn.prod.website-files.com/63061d4ee85b5a18644f221c/633045c1d726c7116dcbe582_JJS_logo.svg" alt="JointJS" />
 </a>
 ```
@@ -908,16 +906,14 @@ Before writing the HTML, Claude must have:
   transition: border-color 160ms, color 160ms, background 160ms;
 }
 #powered-by:hover { border-color: #58a6ff; color: #c9d1d9; background: #1c2d40cc; }
-#powered-by img { height: 18px; width: auto; opacity: 0.85; transition: opacity 160ms; }
+#powered-by img { margin-left: 5px; height: 18px; width: auto; opacity: 0.85; transition: opacity 160ms; }
 #powered-by:hover img { opacity: 1; }
-#powered-by .pb-sep { width: 1px; margin-inline: 5px; height: 14px; background: #30363d; }
 ```
 
 **HTML** — place as first child inside `#canvas-wrap`:
 ```html
 <a id="powered-by" href="https://jointjs.com?utm_source=jointjs-claude-playground&utm_medium=site-explorer&utm_campaign=claude-code" target="_blank" rel="noopener">
   <span style="color:#6e7681;font-size:10px;letter-spacing:0.04em;text-transform:uppercase">Powered by</span>
-  <div class="pb-sep"></div>
   <img src="https://cdn.prod.website-files.com/63061d4ee85b5a18644f221c/633045c1d726c7116dcbe582_JJS_logo.svg" alt="JointJS" />
 </a>
 ```

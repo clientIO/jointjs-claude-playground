@@ -148,9 +148,8 @@ See `templates/site-explorer.md` for the full HTML spec including:
   transition: border-color 160ms, color 160ms, background 160ms;
 }
 #powered-by:hover { border-color: #58a6ff; color: #c9d1d9; background: #1c2d40cc; }
-#powered-by img { height: 18px; width: auto; opacity: 0.85; transition: opacity 160ms; }
+#powered-by img { margin-left: 5px; height: 18px; width: auto; opacity: 0.85; transition: opacity 160ms; }
 #powered-by:hover img { opacity: 1; }
-#powered-by .pb-sep { width: 1px; margin-inline: 5px; height: 14px; background: #30363d; }
 ```
 
 **HTML** (first child inside `#canvas-wrap`):
