@@ -1,8 +1,21 @@
-# JointJS Playground Skills — Claude Code Plugin
+# JointJS Code Playground — Claude Code Plugin
 
-Five JointJS-powered interactive playground skills: a **code map** for library/codebase architecture, a **data explorer** for database schemas, a **canvas builder** for drag-and-drop visual composers, a **diff reviewer** with inline commenting and call graphs, and a **site explorer** for interactive website/docs sitemaps.
+A Claude Code plugin to create custom JointJS-powered interactive playgrounds.
+
+It enables you to build code maps for library/codebase architectures, data explorers for database schemas, canvas builders for drag-and-drop visual composers, diff reviewers with inline commenting and call graphs, and site explorers for interactive website/docs sitemaps.
+
+## Demos
+- [Codemap built with an interactive diagram](https://changelog.jointjs.com/gallery/jointjs-claude-playground/index.html)
+- [SQL Query Builder](https://changelog.jointjs.com/gallery/jointjs-claude-playground/sql-query-builder.html)
+- [Decision Tree Builder](https://changelog.jointjs.com/gallery/jointjs-claude-playground/decision-tree-builder.html)
+- [Regex Builder](https://changelog.jointjs.com/gallery/jointjs-claude-playground/regex-builder.html)
+- [Cron Builder](https://changelog.jointjs.com/gallery/jointjs-claude-playground/cron-builder.html)
+- [Diff Review Tool](https://changelog.jointjs.com/gallery/jointjs-claude-playground/diff-review.html)
+- [Visual Site Explorer](https://changelog.jointjs.com/gallery/jointjs-claude-playground/jointjs-site-explorer.html)
+
 
 ## Skills
+Five JointJS-powered interactive playground skills: a **code map** for library/codebase architecture, a **data explorer** for database schemas, a **canvas builder** for drag-and-drop visual composers, a **diff reviewer** with inline commenting and call graphs, and a **site explorer** for interactive website/docs sitemaps.
 
 ### 1. `codemap` — Code Map Playground
 
