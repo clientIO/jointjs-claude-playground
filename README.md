@@ -132,7 +132,7 @@ You can install the plugin through JointJS marketplace. First you need to add th
 
 ### Install JointJS Claude Playground plugin
 ```
-/plugin install github:clientIO/jointjs-claude-playground
+/plugin install jointjs-claude-playground@jointjs
 ```
 
 After installing the plugin, run `/reload-plugins` to enable the newly installed plugin.
